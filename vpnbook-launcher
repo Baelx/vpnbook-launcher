@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+
+from PIL import Image
+from subprocess import call
+import pyperclip, pytesseract, requests, bs4, re
+
+print("Fetching credentials...")
+try:
+    res = requests.get('https://vpnbook.com/freevpn')
+    res.raise_for_status()
+    soup = bs4.BeautifulSoup(res.text, "lxml")
+    passwd_img = soup.select('html body div#main article#pricing div.container div.one-third.column.box.light.featured ul.disc li img')
+
+    match_img_src = re.compile(r'\"(.*?)\"')
+    img_pass_src = match_img_src.search(str(passwd_img))
+    print(img_pass_src.group(1))
+
+except IOError:
+    print("WARNING: Couldn't reach vpnbook server. Will try to authenticate with existing password if it's found in the current directory.")
